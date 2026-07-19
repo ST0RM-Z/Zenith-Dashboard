@@ -1,5 +1,5 @@
 # Zenith Dashboard
-A minimalist, high-performance personal productivity dashboard for Chrome.
+A minimalist, high-performance personal productivity dashboard for Chrome (Coming soon).
 
 ## Features
 - **Live Widgets:** Real-time tracking for Formula 1, sports, weather, and more.
