@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="theme-color" id="theme-color-meta" content="#121212">
+  <title>New Tab Workspace</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- Global App Settings Modal -->
+  <div id="global-settings-modal" class="modal">
+    <div class="modal-content">
+      <h3>Global Settings</h3>
+      
+      <label>Workspace Emoji / Icon</label>
+      <input type="text" id="settings-workspace-icon" placeholder="e.g., 🎯">
+      
+      <label>Workspace Name</label>
+      <input type="text" id="settings-workspace-name" placeholder="e.g., My Workspace">
+      
+      <label>Theme & Menubar Color</label>
+      <input type="color" id="menu-bg-color" title="Change Theme Color" style="width: 100%; height: 40px;">
+      
+      <label class="btn-menu file-label" style="text-align: center; margin-top: 10px;">
+        🖼️ Upload Background Wallpaper
+        <input type="file" id="wallpaper-upload" accept="image/*" style="display:none;">
+      </label>
+
+      <hr style="border-color: #333; width: 100%; margin: 15px 0;">
+      
+      <h4 style="margin: 0 0 10px 0; color: #ccc;">Data Management</h4>
+      <div style="display: flex; gap: 10px; margin-bottom: 10px;">
+        <button id="btn-export-data" class="btn-primary" style="flex: 1; background: #34c759;">📥 Export Backup</button>
+        <label class="btn-primary" style="flex: 1; text-align: center; cursor: pointer; background: #ff9500;">
+          📤 Import Backup
+          <input type="file" id="btn-import-data" accept=".json" style="display: none;">
+        </label>
+      </div>
+      <button id="btn-reset-data" class="btn-danger" style="width: 100%;">⚠️ Reset to Default Layout</button>
+
+      <hr style="border-color: #333; width: 100%; margin: 15px 0;">
+      
+      <button class="btn-primary" id="btn-open-create-card">+ Create New Card / Widget</button>
+
+      <div class="modal-actions" style="margin-top: 15px;">
+        <button id="btn-close-global-settings">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Create Card / Widget Modal -->
+  <div id="card-modal" class="modal">
+    <div class="modal-content">
+      <h3>Create New Drawer / Widget</h3>
+      <input type="text" id="new-card-title" placeholder="Title (Leave empty for pure minimalist grid)">
+      
+      <label>Card Type:</label>
+      <select id="new-card-type">
+        <option value="shortcuts">App Shortcuts (Grid)</option>
+        <option value="clock">Live Clock & Weather</option>
+        <option value="rss">RSS Feed Reader</option>
+        <option value="sports">Live Sports Scores</option>
+        <option value="countdown">Event Countdown</option>
+      </select>
+
+      <input type="url" id="new-card-rss-url" placeholder="RSS Feed URL (if applicable)" style="display: none;">
+
+      <div class="modal-actions">
+        <button id="btn-cancel-card">Cancel</button>
+        <button id="btn-submit-card" class="btn-primary">Create Card</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add Link Modal -->
+  <div id="link-modal" class="modal">
+    <div class="modal-content">
+      <h3>Add Website Shortcut</h3>
+      <input type="text" id="new-link-name" placeholder="Shortcut Name (e.g., Gmail)">
+      <input type="url" id="new-link-url" placeholder="URL (e.g., https://mail.google.com)">
+      <input type="hidden" id="target-card-id">
+      <div class="modal-actions">
+        <button id="btn-cancel-link">Cancel</button>
+        <button id="btn-submit-link" class="btn-primary">Add Shortcut</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Card Styling Sidebar -->
+  <div id="settings-sidebar" class="sidebar">
+    <div class="sidebar-header">
+      <h3>Card Styling GUI</h3>
+      <button id="btn-close-sidebar">&times;</button>
+    </div>
+    <div class="sidebar-body">
+      <input type="hidden" id="settings-card-id">
+      
+      <button id="btn-sidebar-add-link" class="btn-primary" style="margin-bottom: 15px; display: none;">+ Add App Shortcut</button>
+
+      <label>Card Title</label>
+      <input type="text" id="style-title" placeholder="Leave empty to hide title">
+
+      <label>Dock Layout</label>
+      <select id="style-dock-mode">
+        <option value="floating">Floating Card</option>
+        <option value="snap-left">Snap Left (Ubuntu Dock)</option>
+        <option value="snap-right">Snap Right (Sidebar)</option>
+        <option value="snap-top">Snap Top (Header Dock)</option>
+        <option value="snap-bottom">Snap Bottom (Apple Dock)</option>
+      </select>
+
+      <label>Card Transparency / Color Tint</label>
+      <input type="color" id="style-tint-color" value="#ffffff">
+      
+      <label>Glass Blur Strength</label>
+      <input type="range" id="style-blur" min="0" max="30" value="16">
+
+      <label>Corner Roundness (Border Radius)</label>
+      <input type="range" id="style-radius" min="0" max="40" value="16">
+      
+      <label>Depth & Elevation (Shadow)</label>
+      <input type="range" id="style-depth" min="1" max="5" value="2">
+
+      <hr style="border-color: #333; margin: 10px 0;">
+
+      <label>Internal Scroll Behavior</label>
+      <select id="style-scroll">
+        <option value="enable">Enable Scroll (Fixed Height)</option>
+        <option value="disable">Disable Scroll (Auto-Expand)</option>
+      </select>
+
+      <label>Shortcut Icon Size (px)</label>
+      <input type="range" id="style-icon-size" min="32" max="64" value="48">
+
+      <label>Text & Font Size</label>
+      <input type="range" id="style-font-size" min="10" max="24" value="14">
+
+      <hr style="border-color: #333; margin: 10px 0;">
+
+      <!-- Weather Settings -->
+      <div id="settings-weather" style="display: none;">
+        <label>Weather API Key (OpenWeather)</label>
+        <input type="text" id="style-weather-key" placeholder="Paste API Key here">
+        <label>City Name</label>
+        <input type="text" id="style-city" placeholder="e.g., Waterloo, ON">
+      </div>
+
+      <!-- Sports Settings -->
+      <div id="settings-sports" style="display: none;">
+        <label>Select League / Format</label>
+        <select id="style-sports-league" style="padding: 8px; background: #333; color: #fff; border: 1px solid #444; border-radius: 6px; width: 100%; margin-bottom: 10px;">
+          <option value="fifa">FIFA World Cup</option>
+          <option value="epl">Premier League (Soccer)</option>
+          <option value="nba">NBA (Basketball)</option>
+          <option value="nfl">NFL (Football)</option>
+          <option value="nhl">NHL (Hockey)</option>
+          <option value="cricket/8039">Cricket (International ODI/Test)</option>
+          <option value="cricket/10438">Cricket (T20 / IPL)</option>
+          <option value="racing/f1">Formula 1</option>
+        </select>
+        
+        <label>Game Status Filter</label>
+        <select id="style-sports-status" style="padding: 8px; background: #333; color: #fff; border: 1px solid #444; border-radius: 6px; width: 100%;">
+          <option value="all">Show All Games</option>
+          <option value="in">Live / Current Games Only</option>
+          <option value="post">Completed / Final</option>
+          <option value="pre">Upcoming / Scheduled</option>
+        </select>
+      </div>
+
+      <!-- Countdown Settings -->
+      <div id="settings-countdown" style="display: none;">
+        <label>Event Name</label>
+        <input type="text" id="style-event-name" placeholder="e.g., Next Grand Prix">
+        <label>Target Date & Time</label>
+        <input type="datetime-local" id="style-event-date" style="padding: 8px; background: #333; color: #fff; border: 1px solid #444; border-radius: 6px; width: 100%; box-sizing: border-box;">
+      </div>
+      
+      <hr>
+      <button id="btn-delete-card" class="btn-danger">Delete This Card</button>
+    </div>
+  </div>
+
+  <header class="menubar" id="global-menubar">
+    <div class="logo">
+      <span id="workspace-logo-icon">🎯</span> 
+      <span id="workspace-logo-text">My Workspace</span>
+    </div>
+    <div class="menu-actions">
+      <button class="btn-menu" id="btn-trigger-global-settings">⚙️ Settings</button>
+    </div>
+  </header>
+
+  <div class="search-container">
+    <form action="https://www.google.com/search" method="GET" class="search-form">
+      <div class="search-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="22px" height="22px">
+          <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
+          <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
+          <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>
+          <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
+        </svg>
+      </div>
+      <input type="text" name="q" class="search-input" placeholder="Search Google..." autocomplete="off" autofocus>
+    </form>
+  </div>
+
+  <main class="workspace" id="workspace"></main>
+  <script src="script.js"></script>
+</body>
+</html>

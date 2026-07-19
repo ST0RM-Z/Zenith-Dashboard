@@ -1,0 +1,510 @@
+:root {
+  --menu-bg: rgba(18, 18, 18, 0.8);
+  --body-bg-img: url('https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?auto=format&fit=crop&w=1920&q=80');
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  background-image: var(--body-bg-img);
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  height: 100vh;
+  overflow: hidden;
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+}
+
+/* =========================================
+   MENUBAR & NAVIGATION
+   ========================================= */
+.menubar {
+  height: 50px;
+  background: var(--menu-bg);
+  backdrop-filter: blur(10px);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  box-sizing: border-box;
+  z-index: 100;
+  flex-shrink: 0;
+}
+
+.logo {
+  font-weight: bold;
+  font-size: 1.1rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-menu, .file-label {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #fff;
+  padding: 6px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  transition: background 0.2s;
+  display: inline-block;
+}
+
+.btn-menu:hover, .file-label:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* =========================================
+   GOOGLE SEARCH BAR (ANIMATED)
+   ========================================= */
+.search-container {
+  display: flex;
+  justify-content: center;
+  padding: 40px 20px 20px 20px;
+  flex-shrink: 0;
+  animation: slideDownFade 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+  opacity: 0;
+  transform: translateY(-20px);
+}
+
+@keyframes slideDownFade {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.search-form {
+  position: relative;
+  width: 100%;
+  max-width: 600px;
+  transition: max-width 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.search-form:focus-within {
+  max-width: 680px; 
+}
+
+.search-input {
+  width: 100%;
+  padding: 16px 20px 16px 50px;
+  border-radius: 30px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(10px);
+  color: #fff;
+  font-size: 1.1rem;
+  box-sizing: border-box;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+  transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.search-input:focus {
+  outline: none;
+  background: rgba(0, 0, 0, 0.7);
+  border-color: rgba(255, 255, 255, 0.36);
+  box-shadow: 0 08 20px rgba(0,0,0,0.4), 0 0 20px rgb(12, 12, 12);
+  transform: translateY(-2px);
+}
+
+.search-icon {
+  position: absolute;
+  left: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.75;
+  transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.75s;
+  pointer-events: none;
+}
+
+.search-form:focus-within .search-icon {
+  opacity: 1;
+  transform: translateY(-50%) scale(1.15);
+}
+
+/* =========================================
+   WORKSPACE & CARD LAYOUT
+   ========================================= */
+.workspace {
+  position: relative;
+  width: 100%;
+  height: calc(100vh - 50px);
+  overflow: hidden; 
+}
+
+.card {
+  background: var(--card-bg, rgba(255, 255, 255, 0.08));
+  backdrop-filter: blur(var(--card-blur, 16px));
+  -webkit-backdrop-filter: blur(var(--card-blur, 16px));
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: var(--card-radius, 16px);
+  width: var(--card-width, 300px);
+  height: var(--card-height, auto); 
+  min-height: 120px;
+  padding: 20px;
+  box-shadow: var(--card-shadow, 0 8px 32px 0 rgba(0, 0, 0, 0.25));
+  position: absolute; 
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden; 
+  resize: both; 
+}
+
+.card::-webkit-resizer {
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 10 10"><path d="M10,0 L0,10 L10,10 Z" fill="rgba(255,255,255,0.4)"/></svg>');
+  background-repeat: no-repeat;
+  background-position: bottom right;
+  cursor: nwse-resize;
+}
+
+/* Snapping Options */
+.card.snap-left { position: absolute; left: 0; top: 0; height: 100%; border-radius: 0 var(--card-radius) var(--card-radius) 0; border-left: none; resize: horizontal; }
+.card.snap-right { position: absolute; right: 0; top: 0; height: 100%; border-radius: var(--card-radius) 0 0 var(--card-radius); border-right: none; resize: horizontal; }
+.card.snap-top { position: absolute; top: 0; left: 0; width: 100% !important; border-radius: 0 0 var(--card-radius) var(--card-radius); border-top: none; resize: vertical; }
+.card.snap-bottom { position: absolute; bottom: 0; left: 0; width: 100% !important; border-radius: var(--card-radius) var(--card-radius) 0 0; border-bottom: none; resize: vertical; }
+
+/* =========================================
+   CARD HEADERS & DRAG CONTROLS
+   ========================================= */
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+  flex-shrink: 0;
+  min-height: 24px;
+}
+
+/* If the card title is empty, we keep the drag-handle and gear aligned beautifully */
+.card-header.empty-title {
+  margin-bottom: 10px;
+}
+
+/* Update Card Title to scale with the new font setting */
+.card-title {
+  margin: 0;
+  font-size: calc(var(--card-font-size, 14px) * 1.15);
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  color: #fff;
+}
+
+/* Update App Label to scale dynamically */
+.app-label { 
+  font-size: calc(var(--card-font-size, 14px) * 0.85); 
+  text-align: center; 
+  white-space: nowrap; 
+  overflow: hidden; 
+  text-overflow: ellipsis; 
+  width: 100%; 
+}
+
+/* Update RSS Styling to scale and truncate long HTML/Text gracefully */
+.rss-item {
+  background: rgba(0,0,0,0.2); 
+  border-radius: 8px; 
+  padding: 10px; 
+  text-decoration: none; 
+  color: #fff; 
+  font-size: var(--card-font-size, 14px); 
+  border: 1px solid rgba(255,255,255,0.05); 
+  transition: background 0.2s;
+  
+  /* Prevent massive HTML blocks from ruining the card layout */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2; /* Legacy WebKit support */
+  line-clamp: 2;         /* Standard property to clear the warning */
+  -webkit-box-orient: vertical;
+}
+
+.rss-title { 
+  font-weight: bold; 
+  margin-bottom: 5px; 
+  font-size: calc(var(--card-font-size, 14px) * 1.05);
+}
+
+.rss-date { 
+  font-size: calc(var(--card-font-size, 14px) * 0.8); 
+  color: #aaa; 
+}
+
+/* We completely REMOVE the .btn-add-shortcut CSS since it's in the sidebar now! */
+
+.card-actions {
+  display: flex;
+  gap: 10px;
+  opacity: 0; 
+  pointer-events: none;
+  transition: opacity 0.2s ease-in-out;
+}
+
+.card:hover .card-actions {
+  opacity: 1; 
+  pointer-events: auto;
+}
+
+.btn-card-action {
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.8);
+  cursor: pointer;
+  font-size: 1.1rem;
+}
+
+.btn-card-action:hover { 
+  color: #fff; 
+  transform: scale(1.1); 
+}
+
+.drag-handle {
+  cursor: grab;
+  color: rgba(255, 255, 255, 0.4);
+  margin-right: 10px;
+  font-size: 1.2rem;
+  user-select: none;
+  transition: color 0.2s;
+}
+
+.drag-handle:hover {
+  color: #fff;
+}
+
+.drag-handle:active {
+  cursor: grabbing;
+}
+
+.card.dragging {
+  opacity: 0.5;
+  transform: scale(0.98);
+  border: 1px solid #0076ff;
+}
+
+/* =========================================
+   WIDGET CONTENT AREAS & SCROLL ENGINE
+   ========================================= */
+.widget-content {
+  flex-grow: 1;
+  overflow-x: hidden;
+  
+  /* NEW: Controlled Scroll Toggle */
+  overflow-y: var(--card-scroll, auto);
+}
+
+/* 1. App Shortcuts Grid */
+.app-grid {
+  display: grid;
+  /* NEW: Automatically scales columns based on dynamic icon widths */
+  grid-template-columns: repeat(auto-fill, minmax(calc(var(--icon-width, 48px) + 20px), 1fr));
+  gap: 15px;
+  padding-bottom: 10px;
+}
+
+.app-icon {
+  display: flex; 
+  flex-direction: column; 
+  align-items: center; 
+  text-decoration: none; 
+  color: rgba(255, 255, 255, 0.9); 
+  transition: transform 0.15s; 
+  position: relative;
+}
+
+.app-icon:hover { 
+  transform: scale(1.1); 
+  color: #fff; 
+}
+
+/* NEW: Dynamic Shortcut Sizing Wrapper */
+.icon-wrapper {
+  width: var(--icon-width, 48px); 
+  height: var(--icon-width, 48px); 
+  background: rgba(255, 255, 255, 0.95); 
+  border-radius: 12px; 
+  display: flex; 
+  align-items: center; 
+  justify-content: center; 
+  overflow: hidden; 
+  margin-bottom: 6px; 
+  border: 1px solid rgba(255, 255, 255, 0.1); 
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15); 
+  transition: transform 0.2s, width 0.2s, height 0.2s;
+}
+
+.icon-wrapper img { 
+  width: calc(var(--icon-width, 48px) * 0.66); 
+  height: calc(var(--icon-width, 48px) * 0.66); 
+  object-fit: contain; 
+}
+
+.icon-letter-fallback { 
+  font-size: calc(var(--icon-width, 48px) * 0.4); 
+  font-weight: bold; 
+  text-transform: uppercase; 
+}
+
+.app-label { 
+  font-size: 0.72rem; 
+  text-align: center; 
+  white-space: nowrap; 
+  overflow: hidden; 
+  text-overflow: ellipsis; 
+  width: 100%; 
+}
+
+/* Shortcut Delete Badge */
+.btn-delete-shortcut {
+  position: absolute; 
+  top: -4px; 
+  right: 4px; 
+  width: 18px; 
+  height: 18px; 
+  background: #ff3b30; 
+  color: #fff; 
+  border: 1px solid rgba(255, 255, 255, 0.3); 
+  border-radius: 50%; 
+  font-size: 11px; 
+  font-weight: bold; 
+  display: flex; 
+  align-items: center; 
+  justify-content: center; 
+  cursor: pointer; 
+  opacity: 0; 
+  transform: scale(0.8); 
+  transition: opacity 0.2s, transform 0.2s; 
+  z-index: 10;
+}
+
+.app-icon:hover .btn-delete-shortcut { opacity: 1; transform: scale(1); }
+.btn-delete-shortcut:hover { background: #e02d22; transform: scale(1.1) !important; }
+
+/* Add Shortcut Button */
+.btn-add-shortcut {
+  width: var(--icon-width, 48px); 
+  height: var(--icon-width, 48px); 
+  background: rgba(255, 255, 255, 0.05); 
+  border: 1px dashed rgba(255, 255, 255, 0.25); 
+  border-radius: 12px; 
+  display: flex; 
+  align-items: center; 
+  justify-content: center; 
+  color: rgba(255, 255, 255, 0.5); 
+  font-size: 1.5rem; 
+  cursor: pointer; 
+  transition: all 0.2s, width 0.2s, height 0.2s; 
+  margin: 0 auto;
+}
+
+.btn-add-shortcut:hover { background: rgba(255, 255, 255, 0.1); border-color: #fff; color: #fff; }
+
+/* 2. Clock Widget Styling */
+.clock-widget {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  font-variant-numeric: tabular-nums;
+}
+.clock-time { font-size: 3rem; font-weight: bold; letter-spacing: 2px; }
+.clock-date { font-size: 1rem; color: rgba(255, 255, 255, 0.7); margin-top: 5px; text-transform: uppercase; letter-spacing: 1px;}
+
+/* 3. RSS Widget Styling */
+.rss-widget { display: flex; flex-direction: column; gap: 10px; }
+.rss-item {
+  background: rgba(0,0,0,0.2); 
+  border-radius: 8px; 
+  padding: 10px; 
+  text-decoration: none; 
+  color: #fff; 
+  font-size: 0.85rem; 
+  border: 1px solid rgba(255,255,255,0.05); 
+  transition: background 0.2s;
+}
+.rss-item:hover { background: rgba(0,0,0,0.4); }
+.rss-title { font-weight: bold; margin-bottom: 5px; }
+.rss-date { font-size: 0.7rem; color: #aaa; }
+
+/* =========================================
+   MODALS (Popups)
+   ========================================= */
+.modal { 
+  display: none; 
+  position: fixed; 
+  top: 0; 
+  left: 0; 
+  width: 100%; 
+  height: 100%; 
+  background: rgba(0, 0, 0, 0.6); 
+  backdrop-filter: blur(4px); 
+  z-index: 110; 
+  justify-content: center; 
+  align-items: center; 
+}
+
+.modal-content { 
+  background: #222; 
+  border: 1px solid rgba(255, 255, 255, 0.15); 
+  border-radius: 14px; 
+  padding: 25px; 
+  width: 350px; 
+  display: flex; 
+  flex-direction: column; 
+  gap: 15px; 
+}
+
+.modal-content label { font-size: 0.85rem; color: #ccc; margin-bottom: -5px;}
+.modal-content input, .modal-content select { 
+  padding: 10px; 
+  border-radius: 6px; 
+  border: 1px solid #444; 
+  background: #111; 
+  color: #fff; 
+  width: 100%; 
+  box-sizing: border-box;
+}
+
+.modal-actions { display: flex; justify-content: flex-end; gap: 10px; }
+.modal-actions button { padding: 8px 16px; border-radius: 6px; border: none; cursor: pointer; }
+.btn-primary { background: #0076ff; color: #fff; }
+.btn-danger { background: #ff3b30; color: #fff; }
+
+/* =========================================
+   SETTINGS SIDEBAR
+   ========================================= */
+.sidebar { 
+  position: fixed; 
+  top: 0; 
+  right: -320px; 
+  width: 300px; 
+  height: 100%; 
+  background: #1a1a1a; 
+  border-left: 1px solid rgba(255, 255, 255, 0.1); 
+  z-index: 120; 
+  transition: right 0.3s cubic-bezier(0.1, 0.9, 0.2, 1); 
+  padding: 20px; 
+  box-sizing: border-box; 
+  overflow-y: auto;
+}
+
+.sidebar.active { right: 0; }
+
+.sidebar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
+.sidebar-header h3 { margin: 0; }
+.sidebar-header button { background: transparent; border: none; color: #fff; font-size: 1.5rem; cursor: pointer; }
+
+.sidebar-body { display: flex; flex-direction: column; gap: 15px; }
+.sidebar-body label { font-size: 0.8rem; color: #aaa; }
+.sidebar-body select, .sidebar-body input[type="range"], .sidebar-body input[type="text"] { width: 100%; box-sizing: border-box; }
+.sidebar-body input[type="text"] { padding: 8px; background: #333; color: #fff; border: 1px solid #444; border-radius: 6px;}
+.sidebar-body select { padding: 8px; background: #333; color: #fff; border: 1px solid #444; border-radius: 6px; }

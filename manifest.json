@@ -1,0 +1,23 @@
+{
+  "manifest_version": 3,
+ "name": "Zenith Dashboard",
+"description": "A personal productivity dashboard with live widgets for sports, weather, and custom shortcuts.",
+
+  "version": "1.0",
+  
+  "chrome_url_overrides": {
+    "newtab": "newtab.html"
+  },
+  "permissions": ["storage", "favicon", "unlimitedStorage"],
+  "host_permissions": [
+    "https://api.rss2json.com/*",
+    "https://icons.duckduckgo.com/*",
+    "https://api.openweathermap.org/*",
+    "https://site.api.espn.com/*"
+  ],
+  "icons": {
+    "16": "icons/16.png",
+    "48": "icons/48.png",
+    "128": "icons/128.png"
+  }
+}
