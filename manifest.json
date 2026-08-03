@@ -3,7 +3,7 @@
  "name": "Zenith Dashboard",
 "description": "A personal productivity dashboard with live widgets for sports, weather, and custom shortcuts.",
 
-  "version": "1.0",
+  "version": "1.1",
   
   "chrome_url_overrides": {
     "newtab": "newtab.html"
