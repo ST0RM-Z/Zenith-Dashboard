@@ -5,8 +5,17 @@
   <meta name="theme-color" id="theme-color-meta" content="#121212">
   <title>New Tab Workspace</title>
   <link rel="stylesheet" href="styles.css">
+  <!-- PREVENT FLASHLIGHT: Set instant background state -->
+  <style>
+    body {
+      background-color: #121212;
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+    }
+  </style>
 </head>
-<body>
+<body style="background-color: #121212; margin: 0; overflow: hidden;">
 
   <!-- Global App Settings Modal -->
   <div id="global-settings-modal" class="modal">

@@ -57,6 +57,9 @@ function loadData() {
       renderWorkspace();
       applyGlobalStyles();
     }
+    
+    // Reveal body smoothly once state, wallpaper, and styles are applied to prevent flash
+    document.body.classList.add('loaded');
   });
 }
 
@@ -67,17 +70,26 @@ function saveData() {
 function applyGlobalStyles() {
   if (state.theme.menuBg) {
     document.documentElement.style.setProperty('--menu-bg', state.theme.menuBg);
-    document.getElementById('menu-bg-color').value = rgbToHex(state.theme.menuBg);
+    const menuBgColorEl = document.getElementById('menu-bg-color');
+    if (menuBgColorEl) menuBgColorEl.value = rgbToHex(state.theme.menuBg);
     const metaTheme = document.getElementById('theme-color-meta');
     if (metaTheme) metaTheme.setAttribute('content', rgbToHex(state.theme.menuBg));
   }
   if (state.theme.wallpaper) {
     document.documentElement.style.setProperty('--body-bg-img', `url("${state.theme.wallpaper}")`);
   }
-  document.getElementById('workspace-logo-text').innerText = state.theme.workspaceName || 'My Workspace';
-  document.getElementById('workspace-logo-icon').innerText = state.theme.workspaceIcon || '🎯';
-  document.getElementById('settings-workspace-name').value = state.theme.workspaceName || '';
-  document.getElementById('settings-workspace-icon').value = state.theme.workspaceIcon || '';
+  
+  const logoTextEl = document.getElementById('workspace-logo-text');
+  if (logoTextEl) logoTextEl.innerText = state.theme.workspaceName || 'My Workspace';
+  
+  const logoIconEl = document.getElementById('workspace-logo-icon');
+  if (logoIconEl) logoIconEl.innerText = state.theme.workspaceIcon || '🎯';
+  
+  const wsNameEl = document.getElementById('settings-workspace-name');
+  if (wsNameEl) wsNameEl.value = state.theme.workspaceName || '';
+  
+  const wsIconEl = document.getElementById('settings-workspace-icon');
+  if (wsIconEl) wsIconEl.value = state.theme.workspaceIcon || '';
 }
 
 function bindGlobalEvents() {
@@ -92,10 +104,13 @@ function bindGlobalEvents() {
   document.getElementById('btn-cancel-card').addEventListener('click', () => closeModal('card-modal'));
   document.getElementById('btn-submit-card').addEventListener('click', saveNewCard);
   
-  document.getElementById('new-card-type').addEventListener('change', (e) => {
-    const rssInput = document.getElementById('new-card-rss-url');
-    rssInput.style.display = e.target.value === 'rss' ? 'block' : 'none';
-  });
+  const newCardTypeEl = document.getElementById('new-card-type');
+  if (newCardTypeEl) {
+    newCardTypeEl.addEventListener('change', (e) => {
+      const rssInput = document.getElementById('new-card-rss-url');
+      if (rssInput) rssInput.style.display = e.target.value === 'rss' ? 'block' : 'none';
+    });
+  }
 
   document.getElementById('btn-cancel-link').addEventListener('click', () => closeModal('link-modal'));
   document.getElementById('btn-submit-link').addEventListener('click', saveNewLink);
@@ -115,30 +130,44 @@ function bindGlobalEvents() {
     if(el) el.addEventListener('input', applyGUIChanges);
   });
 
-  document.getElementById('settings-workspace-name').addEventListener('input', (e) => { state.theme.workspaceName = e.target.value; saveData(); applyGlobalStyles(); });
-  document.getElementById('settings-workspace-icon').addEventListener('input', (e) => { state.theme.workspaceIcon = e.target.value; saveData(); applyGlobalStyles(); });
-  document.getElementById('menu-bg-color').addEventListener('input', (e) => { state.theme.menuBg = hexToRgba(e.target.value, 0.8); saveData(); applyGlobalStyles(); });
+  const settingsWsName = document.getElementById('settings-workspace-name');
+  if (settingsWsName) {
+    settingsWsName.addEventListener('input', (e) => { state.theme.workspaceName = e.target.value; saveData(); applyGlobalStyles(); });
+  }
   
-  document.getElementById('wallpaper-upload').addEventListener('change', (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      const img = new Image();
-      img.onload = () => {
-        const canvas = document.createElement('canvas');
-        const scale = Math.min(1, 1920 / img.width);
-        canvas.width = img.width * scale;
-        canvas.height = img.height * scale;
-        const ctx = canvas.getContext('2d');
-        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-        state.theme.wallpaper = canvas.toDataURL('image/jpeg', 0.85); 
-        saveData(); applyGlobalStyles();
+  const settingsWsIcon = document.getElementById('settings-workspace-icon');
+  if (settingsWsIcon) {
+    settingsWsIcon.addEventListener('input', (e) => { state.theme.workspaceIcon = e.target.value; saveData(); applyGlobalStyles(); });
+  }
+  
+  const menuBgColor = document.getElementById('menu-bg-color');
+  if (menuBgColor) {
+    menuBgColor.addEventListener('input', (e) => { state.theme.menuBg = hexToRgba(e.target.value, 0.8); saveData(); applyGlobalStyles(); });
+  }
+  
+  const wallpaperUpload = document.getElementById('wallpaper-upload');
+  if (wallpaperUpload) {
+    wallpaperUpload.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const img = new Image();
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          const scale = Math.min(1, 1920 / img.width);
+          canvas.width = img.width * scale;
+          canvas.height = img.height * scale;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+          state.theme.wallpaper = canvas.toDataURL('image/jpeg', 0.85); 
+          saveData(); applyGlobalStyles();
+        };
+        img.src = event.target.result;
       };
-      img.src = event.target.result;
-    };
-    reader.readAsDataURL(file);
-  });
+      reader.readAsDataURL(file);
+    });
+  }
 
   document.getElementById('btn-export-data').addEventListener('click', () => {
     const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(state));
@@ -150,27 +179,30 @@ function bindGlobalEvents() {
     downloadAnchorNode.remove();
   });
 
-  document.getElementById('btn-import-data').addEventListener('change', (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      try {
-        const importedState = JSON.parse(event.target.result);
-        if (importedState && importedState.cards) {
-          state = importedState;
-          saveData(); applyGlobalStyles(); renderWorkspace();
-          closeModal('global-settings-modal');
-        } else {
-          alert("Invalid backup file structure.");
+  const importDataEl = document.getElementById('btn-import-data');
+  if (importDataEl) {
+    importDataEl.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        try {
+          const importedState = JSON.parse(event.target.result);
+          if (importedState && importedState.cards) {
+            state = importedState;
+            saveData(); applyGlobalStyles(); renderWorkspace();
+            closeModal('global-settings-modal');
+          } else {
+            alert("Invalid backup file structure.");
+          }
+        } catch (err) {
+          alert("Error parsing backup file.");
         }
-      } catch (err) {
-        alert("Error parsing backup file.");
-      }
-    };
-    reader.readAsText(file);
-    e.target.value = ''; 
-  });
+      };
+      reader.readAsText(file);
+      e.target.value = ''; 
+    });
+  }
 
   document.getElementById('btn-reset-data').addEventListener('click', () => {
     if (confirm("Are you sure? This will delete all custom cards and reset your workspace.")) {
@@ -200,6 +232,7 @@ function bindGlobalEvents() {
 
 function renderWorkspace() {
   const workspace = document.getElementById('workspace');
+  if (!workspace) return;
   workspace.innerHTML = '';
   activeIntervals.forEach(clearInterval);
   activeIntervals = [];
@@ -379,7 +412,6 @@ function renderWorkspace() {
           if (validEvents.length === 0) {
             html += `<div style="font-size:0.8rem; opacity:0.6; text-align:center; padding-top: 10px;">No games match this filter right now.</div>`;
           } else {
-            // Racing Logic (F1)
             if (endpoint.includes('racing')) {
               validEvents.slice(0, 5).forEach(event => {
                 const comp = event.competitions?.[0] || {};
@@ -412,7 +444,6 @@ function renderWorkspace() {
                 html += `<div style="font-size:0.7rem; color:#aaa; text-align:right; margin-top:6px;">${status}</div></div>`;
               });
             } else {
-              // Standard Team Logic (FIFA, Cricket, NBA, etc.)
               validEvents.slice(0, 5).forEach(event => {
                 const comp = event.competitions?.[0] || {};
                 const home = (comp.competitors || []).find(c => c.homeAway === 'home') || (comp.competitors || [])[0] || {};
@@ -421,7 +452,6 @@ function renderWorkspace() {
                 const homeTeam = home.team || {};
                 const awayTeam = away.team || {};
                 
-                // Smart logo parsing: checks for simple string or nested array
                 const homeLogo = homeTeam.logo || (homeTeam.logos?.[0]?.href) || '';
                 const awayLogo = awayTeam.logo || (awayTeam.logos?.[0]?.href) || '';
                 
@@ -596,7 +626,6 @@ function openSidebar(cardId) {
   document.getElementById('style-event-name').value = card.eventName || '';
   document.getElementById('style-event-date').value = card.eventDate || '';
 
-  // Dynamic Sidebar Toggles
   document.getElementById('btn-sidebar-add-link').style.display = card.type === 'shortcuts' ? 'block' : 'none';
   document.getElementById('settings-weather').style.display = card.type === 'clock' ? 'block' : 'none';
   document.getElementById('settings-sports').style.display = card.type === 'sports' ? 'block' : 'none';
@@ -657,8 +686,9 @@ function hexToRgba(hex, alpha) {
   return `rgba(${r}, ${g}, ${b}, ${alpha})`;
 }
 function rgbToHex(rgba) {
-  if (!rgba.startsWith('rgba')) return '#ffffff';
+  if (!rgba || !rgba.startsWith('rgba')) return '#ffffff';
   const parts = rgba.match(/\d+/g);
+  if (!parts || parts.length < 3) return '#ffffff';
   return `#${parseInt(parts[0]).toString(16).padStart(2,'0')}${parseInt(parts[1]).toString(16).padStart(2,'0')}${parseInt(parts[2]).toString(16).padStart(2,'0')}`;
 }
 function getRandomColor(str) {
